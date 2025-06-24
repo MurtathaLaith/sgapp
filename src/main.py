@@ -1,6 +1,5 @@
 import os
 import sys
-# DON'T CHANGE THESE LINES
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from flask import Flask
@@ -18,22 +17,9 @@ CORS(app, origins=['https://calm-unicorn-63d58d.netlify.app'] )
 
 db.init_app(app)
 
-# AUTO-CREATE DATABASE TABLES ON STARTUP
+# SIMPLE database creation - NO AUTO-INITIALIZATION
 with app.app_context():
     db.create_all()
-    
-    # Check if database is empty and initialize it
-    from src.models.switchgear import Manufacturer
-    if Manufacturer.query.count() == 0:
-        print("Database is empty, initializing with sample data...")
-        try:
-            # Import and run the initialization
-            import subprocess
-            import sys
-            subprocess.run([sys.executable, 'init_database.py'], check=True)
-            print("Database initialized successfully!")
-        except Exception as e:
-            print(f"Error initializing database: {e}")
 
 app.register_blueprint(user_bp, url_prefix='/api/users')
 app.register_blueprint(switchgear_bp, url_prefix='/api/switchgear')
