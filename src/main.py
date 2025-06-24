@@ -13,7 +13,7 @@ app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), 'sta
 app.config['SECRET_KEY'] = 'asdf#FGSgvasgf$5$WGT'
 
 # Enable CORS for all routes
-CORS(app, origins=['https://calm-unicorn-63d58d.netlify.app/'])
+CORS(app, origins=['*'])
 
 app.register_blueprint(user_bp, url_prefix='/api')
 app.register_blueprint(switchgear_bp, url_prefix='/api/switchgear')
