@@ -2,6 +2,7 @@ import os
 import sys
 # DON'T CHANGE THIS !!!
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+####
 
 from flask import Flask, send_from_directory
 from flask_cors import CORS
@@ -9,20 +10,30 @@ from src.models.user import db
 from src.routes.user import user_bp
 from src.routes.switchgear import switchgear_bp
 
-app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), 'static'))
-app.config['SECRET_KEY'] = 'asdf#FGSgvasgf$5$WGT'
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Enable CORS for all routes
-CORS(app, origins=['*'])
+# More explicit CORS configuration
+CORS(app, 
+     origins=['https://calm-unicorn-63d58d.netlify.app'],
+     methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+     allow_headers=['Content-Type', 'Authorization'] )
 
-app.register_blueprint(user_bp, url_prefix='/api')
+db.init_app(app)
+app.register_blueprint(user_bp, url_prefix='/api/users')
 app.register_blueprint(switchgear_bp, url_prefix='/api/switchgear')
 
-# uncomment if you need to use database
-app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(os.path.dirname(__file__), 'database', 'app.db')}"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db.init_app(app)
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5001))
+    app.run(host='0.0.0.0', port=port, debug=False)
 
+####
+
+#here
+#######
+######
+#here
 # Import all models to ensure they are registered
 from src.models.switchgear import Manufacturer, StartingMethod, Contactor, OverloadRelay, Motor
 
