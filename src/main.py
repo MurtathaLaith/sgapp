@@ -17,9 +17,12 @@ CORS(app, origins=['https://calm-unicorn-63d58d.netlify.app'] )
 
 db.init_app(app)
 
-# SIMPLE database creation - NO AUTO-INITIALIZATION
+# SAFE database creation - handles existing tables
 with app.app_context():
-    db.create_all()
+    try:
+        db.create_all()
+    except Exception as e:
+        print(f"Database tables may already exist: {e}")
 
 app.register_blueprint(user_bp, url_prefix='/api/users')
 app.register_blueprint(switchgear_bp, url_prefix='/api/switchgear')
@@ -27,7 +30,6 @@ app.register_blueprint(switchgear_bp, url_prefix='/api/switchgear')
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5001))
     app.run(host='0.0.0.0', port=port, debug=False)
-
 # Import all models to ensure they are registered
 from src.models.switchgear import Manufacturer, StartingMethod, Contactor, OverloadRelay, Motor
 
